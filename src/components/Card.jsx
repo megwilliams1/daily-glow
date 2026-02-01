@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react"
 
 const CONFETTI_COLORS = [
-  '#ff6b9d', // pink
-  '#ffd93d', // yellow
-  '#6bcb77', // green
-  '#4d96ff', // blue
-  '#ff8e53', // orange
-  '#a855f7', // purple
+  '#ff6b9d',
+  '#ffd93d',
+  '#6bcb77',
+  '#4d96ff',
+  '#ff8e53',
+  '#a855f7',
 ]
 
 const PARTICLE_COUNT = 20
@@ -31,6 +31,7 @@ function createParticle(index) {
 
 export default function Card({ title, emoji }) {
   const [done, setDone] = useState(false)
+  const [streak, setStreak] = useState(0)
   const [particles, setParticles] = useState([])
   const [animating, setAnimating] = useState(false)
 
@@ -38,17 +39,22 @@ export default function Card({ title, emoji }) {
     const wasNotDone = !done
     setDone(!done)
 
-    // Only burst confetti when marking as complete (not when uncompleting)
     if (wasNotDone) {
-      const newParticles = Array.from({ length: PARTICLE_COUNT }, (_, i) => createParticle(i))
+      setStreak((prev) => prev + 1)
+
+      const newParticles = Array.from(
+        { length: PARTICLE_COUNT },
+        (_, i) => createParticle(i)
+      )
       setParticles(newParticles)
       setAnimating(true)
 
-      // Clean up particles after animation
       setTimeout(() => {
         setParticles([])
         setAnimating(false)
       }, 800)
+    } else {
+      setStreak(0)
     }
   }, [done])
 
@@ -60,19 +66,31 @@ export default function Card({ title, emoji }) {
           ? "bg-pink-100 dark:bg-pink-900 scale-105"
           : "bg-white dark:bg-neutral-800 hover:-translate-y-1"}`}
     >
+      {streak > 0 && (
+        <div className="absolute top-3 right-3
+                        bg-orange-400 text-white
+                        text-xs px-2 py-1 rounded-full shadow">
+          🔥 {streak}
+        </div>
+      )}
+
       <h2 className="text-xl text-gray-800 dark:text-gray-200">
         {emoji} {title}
       </h2>
+
       <p className="mt-2 text-gray-600 dark:text-gray-300">
         {done ? "Completed!" : "Not yet"}
       </p>
-      {done && (
-        <span className="block mt-2 animate-pulse text-yellow-400">
-          ✨✨✨
-        </span>
+
+      {streak > 0 && (
+        <div className="mt-2 inline-flex items-center gap-1
+                        bg-orange-100 dark:bg-orange-900
+                        text-orange-600 dark:text-orange-300
+                        px-3 py-1 rounded-full text-sm">
+          🔥 {streak} day streak
+        </div>
       )}
 
-      {/* Confetti particles */}
       {animating && particles.map((particle) => {
         const rad = (particle.angle * Math.PI) / 180
         const x = Math.cos(rad) * particle.velocity
@@ -104,7 +122,8 @@ export default function Card({ title, emoji }) {
           }
           100% {
             opacity: 0;
-            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) - 40px)) scale(0.5) rotate(180deg);
+            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) - 40px))
+              scale(0.5) rotate(180deg);
           }
         }
       `}</style>
