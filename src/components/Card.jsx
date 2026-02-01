@@ -31,28 +31,86 @@ function createParticle(index) {
 }
 
 export default function Card({ title, emoji }) {
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(() => {
+    const saved = localStorage.getItem(`done-${title}`);
+    const savedDate = localStorage.getItem(`doneDate-${title}`);
+    const today = new Date().toDateString();
+    
+    // Reset to done if it's a new day
+    if (savedDate !== today) {
+      return false;
+    }
+    return saved === "true";
+  });
+
   const [streak, setStreak] = useState(() => {
     const saved = localStorage.getItem(`streak-${title}`);
     return saved ? Number(saved) : 0;
   });
+
+  const [lastCompleted, setLastCompleted] = useState(() => {
+    const saved = localStorage.getItem(`lastCompleted-${title}`);
+    return saved || null;
+  });
+
   const [particles, setParticles] = useState([]);
   const [animating, setAnimating] = useState(false);
 
+  // Save done state AND the date
+  useEffect(() => {
+    localStorage.setItem(`done-${title}`, done);
+    if (done) {
+      const today = new Date().toDateString();
+      localStorage.setItem(`doneDate-${title}`, today);
+    }
+  }, [done, title]);
+
+  // Save streak
   useEffect(() => {
     localStorage.setItem(`streak-${title}`, streak);
   }, [streak, title]);
 
-  const handleClick = useCallback(() => {
-    const wasNotDone = !done;
-    setDone(!done);
-
-    if (wasNotDone) {
-      setStreak((prev) => prev + 1);
-    } else {
-      setStreak(0);
+  // Save the last completed date
+  useEffect(() => {
+    if (lastCompleted) {
+      localStorage.setItem(`lastCompleted-${title}`, lastCompleted);
     }
-  }, [done]);
+  }, [lastCompleted, title]);
+
+  const handleClick = useCallback(() => {
+    const newDoneState = !done;
+    setDone(newDoneState);
+
+    if (newDoneState) {
+      const today = new Date().toDateString();
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+      // Only update streak once per day
+      if (lastCompleted === today) {
+        // If a day is completed, just show animation
+      } else if (lastCompleted === yesterday || lastCompleted === null) {
+        // Consecutive day or first time - increase streak
+        setStreak((prev) => prev + 1);
+      } else {
+        // Missed day - resets to 1
+        setStreak(1);
+      }
+
+      setLastCompleted(today);
+
+      // Show confetti
+      const newParticles = Array.from({ length: PARTICLE_COUNT }, (_, i) =>
+        createParticle(i),
+      );
+      setParticles(newParticles);
+      setAnimating(true);
+
+      setTimeout(() => {
+        setParticles([]);
+        setAnimating(false);
+      }, 800);
+    }
+  }, [done, lastCompleted]);
 
   return (
     <div
