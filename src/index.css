@@ -1,16 +1,12 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -41,7 +37,6 @@ h1 {
   line-height: 1.1;
 }
 
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -50,4 +45,66 @@ h1 {
   a:hover {
     color: #747bff;
   }
+}
+
+/* Cute girly gradients */
+.min-h-screen {
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
+}
+
+.dark .min-h-screen {
+  background: linear-gradient(135deg, #1a0a14 0%, #2d1b2e 50%, #4a1942 100%) !important;
+}
+
+/* Manual dark mode styles */
+.dark .rounded-2xl:not(.bg-pink-100) {
+  background-color: #262626 !important;
+}
+
+/* Dark mode - clicked card pink background */
+.dark .bg-pink-100.rounded-2xl {
+  background-color: #be185d !important;
+}
+
+.dark h2 {
+  color: #e5e5e5 !important;
+}
+
+.dark p {
+  color: #a3a3a3 !important;
+}
+
+.dark button:not(.bg-gradient-to-r) {
+  background-color: #404040 !important;
+  color: white !important;
+}
+
+/* Sparkle cursor effect */
+* {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><text y="15" font-size="15">✨</text></svg>'), auto;
+}
+
+/* Cute shadows */
+.rounded-2xl {
+  box-shadow: 0 8px 16px rgba(236, 72, 153, 0.2);
+  transition: all 0.3s ease;
+}
+
+.rounded-2xl:hover {
+  box-shadow: 0 12px 24px rgba(236, 72, 153, 0.3);
+  transform: translateY(-4px) rotate(1deg);
+}
+
+/* Pulse animation for streak badge */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(251, 146, 60, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(251, 146, 60, 0.8);
+  }
+}
+
+.bg-orange-400 {
+  animation: pulse-glow 2s infinite;
 }

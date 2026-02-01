@@ -36,7 +36,7 @@ export default function Card({ title, emoji }) {
     const savedDate = localStorage.getItem(`doneDate-${title}`);
     const today = new Date().toDateString();
     
-    // Reset to done if it's a new day
+    
     if (savedDate !== today) {
       return false;
     }

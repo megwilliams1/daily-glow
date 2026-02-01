@@ -1,13 +1,12 @@
 export default function Header() {
   return (
-   <header className="mb-6 text-center">
-  <h1 className="text-4xl font-bold text-pink-600 dark:text-pink-400">
-    🌸 Daily Glow
-  </h1>
-  <p className="text-pink-400 dark:text-pink-300 mt-2">
-    Small habits, big sparkle ✨
-  </p>
-</header>
-
-  )
+    <div className="text-center mb-8">
+      <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+        ✨ Daily Glow ✨
+      </h1>
+      <p className="text-pink-600 dark:text-pink-300 text-lg font-medium">
+        💕 Your daily self-care tracker 💕
+      </p>
+    </div>
+  );
 }
