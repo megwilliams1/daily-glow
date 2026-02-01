@@ -12,6 +12,7 @@ function App() {
   });
 
   const [showModal, setShowModal] = useState(false)
+  const [editingHabit, setEditingHabit] = useState(null)
  
   const [habits, setHabits] = useState(() => {
     const saved = localStorage.getItem('habits');
@@ -27,15 +28,35 @@ function App() {
     ];
   });
 
-  // Save dark mode preference
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(dark));
   }, [dark]);
 
-  // Save habits to localStorage
   useEffect(() => {
     localStorage.setItem('habits', JSON.stringify(habits));
   }, [habits]);
+
+  const handleDeleteHabit = (id) => {
+    setHabits((prev) => prev.filter((h) => h.id !== id));
+  };
+
+  const handleEditHabit = (habit) => {
+    setEditingHabit(habit);
+    setShowModal(true);
+  };
+
+  const handleSaveHabit = (updatedHabit) => {
+    if (editingHabit) {
+      // Editing existing habit
+      setHabits((prev) =>
+        prev.map((h) => (h.id === editingHabit.id ? { ...h, ...updatedHabit } : h))
+      );
+      setEditingHabit(null);
+    } else {
+      // Adding new habit
+      setHabits((prev) => [...prev, { id: Date.now(), ...updatedHabit }]);
+    }
+  };
 
   return (
     <div className={dark ? "dark" : ""}>
@@ -60,12 +81,17 @@ function App() {
                 key={habit.id}
                 title={habit.title}
                 emoji={habit.emoji}
+                onDelete={() => handleDeleteHabit(habit.id)}
+                onEdit={() => handleEditHabit(habit)}
               />
             ))}
           </div>
 
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setEditingHabit(null);
+              setShowModal(true);
+            }}
             className="fixed bottom-6 right-6 bg-gradient-to-r from-pink-500 to-purple-500
                        text-white w-16 h-16 rounded-full shadow-2xl hover:scale-110 
                        transition text-3xl font-bold hover:rotate-90 duration-300"
@@ -75,10 +101,12 @@ function App() {
 
           {showModal && (
             <Modal
-              onClose={() => setShowModal(false)}
-              onAdd={(newHabit) => {
-                setHabits((prev) => [...prev, { id: Date.now(), ...newHabit }]);
+              onClose={() => {
+                setShowModal(false);
+                setEditingHabit(null);
               }}
+              onAdd={handleSaveHabit}
+              editingHabit={editingHabit}
             />
           )}
         </div>
