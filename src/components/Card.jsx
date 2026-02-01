@@ -30,13 +30,13 @@ function createParticle(index) {
   };
 }
 
-export default function Card({ title, emoji }) {
+export default function Card({ title, emoji, onDelete, onEdit }) {
   const [done, setDone] = useState(() => {
     const saved = localStorage.getItem(`done-${title}`);
     const savedDate = localStorage.getItem(`doneDate-${title}`);
     const today = new Date().toDateString();
     
-    
+    // Reset done if it's a new day
     if (savedDate !== today) {
       return false;
     }
@@ -55,6 +55,7 @@ export default function Card({ title, emoji }) {
 
   const [particles, setParticles] = useState([]);
   const [animating, setAnimating] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
   // Save done state AND the date
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function Card({ title, emoji }) {
     localStorage.setItem(`streak-${title}`, streak);
   }, [streak, title]);
 
-  // Save the last completed date
+  // Save lastCompleted date
   useEffect(() => {
     if (lastCompleted) {
       localStorage.setItem(`lastCompleted-${title}`, lastCompleted);
@@ -87,18 +88,18 @@ export default function Card({ title, emoji }) {
 
       // Only update streak once per day
       if (lastCompleted === today) {
-        // If a day is completed, just show animation
+        // Already completed today, just show animation
       } else if (lastCompleted === yesterday || lastCompleted === null) {
         // Consecutive day or first time - increase streak
         setStreak((prev) => prev + 1);
       } else {
-        // Missed day - resets to 1
+        // Missed a day - reset to 1
         setStreak(1);
       }
 
       setLastCompleted(today);
 
-      // Show confetti
+      // Show confetti animation
       const newParticles = Array.from({ length: PARTICLE_COUNT }, (_, i) =>
         createParticle(i),
       );
@@ -114,7 +115,8 @@ export default function Card({ title, emoji }) {
 
   return (
     <div
-      onClick={handleClick}
+      onMouseEnter={() => setShowActions(true)}
+      onMouseLeave={() => setShowActions(false)}
       className={`relative overflow-visible rounded-2xl p-4 shadow-md cursor-pointer transition
         ${
           done
@@ -122,6 +124,37 @@ export default function Card({ title, emoji }) {
             : "bg-white dark:bg-neutral-800 hover:-translate-y-1"
         }`}
     >
+      {/* Action buttons - show on hover */}
+      {showActions && (
+        <div className="absolute top-2 left-2 flex gap-1 z-10">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit?.();
+            }}
+            className="bg-blue-400 hover:bg-blue-500 text-white w-7 h-7 rounded-full 
+                       flex items-center justify-center text-sm shadow-lg transition"
+            title="Edit habit"
+          >
+            ✏️
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(`Delete "${title}"?`)) {
+                onDelete?.();
+              }
+            }}
+            className="bg-red-400 hover:bg-red-500 text-white w-7 h-7 rounded-full 
+                       flex items-center justify-center text-sm shadow-lg transition"
+            title="Delete habit"
+          >
+            🗑️
+          </button>
+        </div>
+      )}
+
+      {/* Streak badge */}
       {streak > 0 && (
         <div
           className="absolute top-3 right-3
@@ -132,24 +165,26 @@ export default function Card({ title, emoji }) {
         </div>
       )}
 
-      <h2 className="text-xl text-gray-800 dark:text-gray-200">
-        {emoji} {title}
-      </h2>
+      <div onClick={handleClick}>
+        <h2 className="text-xl text-gray-800 dark:text-gray-200">
+          {emoji} {title}
+        </h2>
 
-      <p className="mt-2 text-gray-600 dark:text-gray-300">
-        {done ? "Completed!" : "Not yet"}
-      </p>
+        <p className="mt-2 text-gray-600 dark:text-gray-300">
+          {done ? "Completed!" : "Not yet"}
+        </p>
 
-      {streak > 0 && (
-        <div
-          className="mt-2 inline-flex items-center gap-1
+        {streak > 0 && (
+          <div
+            className="mt-2 inline-flex items-center gap-1
                         bg-orange-100 dark:bg-orange-900
                         text-orange-600 dark:text-orange-300
                         px-3 py-1 rounded-full text-sm"
-        >
-          🔥 {streak} day streak
-        </div>
-      )}
+          >
+            🔥 {streak} day streak
+          </div>
+        )}
+      </div>
 
       {animating &&
         particles.map((particle) => {

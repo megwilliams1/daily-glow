@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Card from './components/Card'
+import ProgressBar from './components/ProgressBar'
 import './index.css'
 import Modal from './components/Modal'
-import FloatingHearts from './components/FloatingHeart'
+import FloatingHearts from './components/FloatingHearts'
 
 function App() {
   const [dark, setDark] = useState(() => {
@@ -28,12 +29,32 @@ function App() {
     ];
   });
 
+  // Calculate completed habits for today
+  const getCompletedCount = () => {
+    const today = new Date().toDateString();
+    return habits.filter((habit) => {
+      const doneDate = localStorage.getItem(`doneDate-${habit.title}`);
+      const isDone = localStorage.getItem(`done-${habit.title}`) === "true";
+      return isDone && doneDate === today;
+    }).length;
+  };
+
+  const [completedCount, setCompletedCount] = useState(getCompletedCount());
+
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(dark));
   }, [dark]);
 
   useEffect(() => {
     localStorage.setItem('habits', JSON.stringify(habits));
+  }, [habits]);
+
+  // Update completed count when habits change
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCompletedCount(getCompletedCount());
+    }, 500);
+    return () => clearInterval(interval);
   }, [habits]);
 
   const handleDeleteHabit = (id) => {
@@ -47,13 +68,11 @@ function App() {
 
   const handleSaveHabit = (updatedHabit) => {
     if (editingHabit) {
-      // Editing existing habit
       setHabits((prev) =>
         prev.map((h) => (h.id === editingHabit.id ? { ...h, ...updatedHabit } : h))
       );
       setEditingHabit(null);
     } else {
-      // Adding new habit
       setHabits((prev) => [...prev, { id: Date.now(), ...updatedHabit }]);
     }
   };
@@ -74,6 +93,8 @@ function App() {
           >
             {dark ? "🌙 Dark Mode" : "☀️ Light Mode"}
           </button>
+
+          <ProgressBar completed={completedCount} total={habits.length} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {habits.map((habit) => (

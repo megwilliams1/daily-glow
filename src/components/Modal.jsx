@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Modal({ onClose, onAdd }) {
+export default function Modal({ onClose, onAdd, editingHabit }) {
   const [title, setTitle] = useState("");
   const [emoji, setEmoji] = useState("✨");
   const emojis = ["✨", "💧", "🌸", "🧘", "📓", "💖", "🎀", "🌙", "🦋", "🍃"];
+
+  // Load existing habit data when editing
+  useEffect(() => {
+    if (editingHabit) {
+      setTitle(editingHabit.title);
+      setEmoji(editingHabit.emoji);
+    }
+  }, [editingHabit]);
 
   const handleAdd = () => {
     if (title.trim()) {
@@ -20,7 +28,7 @@ export default function Modal({ onClose, onAdd }) {
                animate-in zoom-in duration-200"
       >
         <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
-          ✨ Add a Habit
+          {editingHabit ? "✏️ Edit Habit" : "✨ Add a Habit"}
         </h2>
         <input
           type="text"
@@ -56,7 +64,7 @@ export default function Modal({ onClose, onAdd }) {
             disabled={!title.trim()}
             className="px-4 py-2 rounded-lg bg-pink-500 dark:bg-pink-700 text-white hover:bg-pink-600 dark:hover:bg-pink-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            Add
+            {editingHabit ? "Save" : "Add"}
           </button>
         </div>
       </div>
