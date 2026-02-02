@@ -67,12 +67,99 @@ function App() {
     setShowModal(true);
   };
 
+import { useState, useEffect } from 'react'
+import Header from './components/Header'
+import Card from './components/Card'
+import ProgressBar from './components/ProgressBar'
+import MotivationalQuote from './components/MotivationalQuote'
+import CelebrationPopup from './components/CelebrationPopup'
+import './index.css'
+import Modal from './components/Modal'
+import FloatingHearts from './components/FloatingHearts'
+
+function App() {
+  const [dark, setDark] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  const [showModal, setShowModal] = useState(false)
+  const [editingHabit, setEditingHabit] = useState(null)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [hasShownCelebrationToday, setHasShownCelebrationToday] = useState(() => {
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem('celebrationDate');
+    return savedDate === today;
+  });
+ 
+  const [habits, setHabits] = useState(() => {
+    const saved = localStorage.getItem('habits');
+    return saved ? JSON.parse(saved) : [
+      { id: 1, title: "Drink Water", emoji: "💧" },
+      { id: 2, title: "Pray", emoji: "🙏" },
+      { id: 3, title: "Journal", emoji: "📓" },
+      { id: 4, title: "Read", emoji: "📖" },
+      { id: 5, title: "Walk", emoji: "🚶" },
+      { id: 6, title: "Meditate", emoji: "🧘" },
+      { id: 7, title: "Rest", emoji: "💤" },
+      { id: 8, title: "Stretch", emoji: "🤸" },
+    ];
+  });
+
+  const getCompletedCount = () => {
+    const today = new Date().toDateString();
+    return habits.filter((habit) => {
+      const doneDate = localStorage.getItem(`doneDate-${habit.title}`);
+      const isDone = localStorage.getItem(`done-${habit.title}`) === "true";
+      return isDone && doneDate === today;
+    }).length;
+  };
+
+  const [completedCount, setCompletedCount] = useState(getCompletedCount());
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(dark));
+  }, [dark]);
+
+  useEffect(() => {
+    localStorage.setItem('habits', JSON.stringify(habits));
+  }, [habits]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newCompletedCount = getCompletedCount();
+      const previousCount = completedCount;
+      setCompletedCount(newCompletedCount);
+
+      // Check if just completed all habits
+      if (
+        habits.length > 0 &&
+        newCompletedCount === habits.length &&
+        previousCount < habits.length &&
+        !hasShownCelebrationToday
+      ) {
+        setShowCelebration(true);
+        const today = new Date().toDateString();
+        localStorage.setItem('celebrationDate', today);
+        setHasShownCelebrationToday(true);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, [habits, completedCount, hasShownCelebrationToday]);
+
+  const handleDeleteHabit = (id) => {
+    setHabits((prev) => prev.filter((h) => h.id !== id));
+  };
+
+  const handleEditHabit = (habit) => {
+    setEditingHabit(habit);
+    setShowModal(true);
+  };
+
   const handleSaveHabit = (updatedHabit) => {
     if (editingHabit) {
       setHabits((prev) =>
-        prev.map((h) =>
-          h.id === editingHabit.id ? { ...h, ...updatedHabit } : h,
-        ),
+        prev.map((h) => (h.id === editingHabit.id ? { ...h, ...updatedHabit } : h))
       );
       setEditingHabit(null);
     } else {
@@ -98,7 +185,7 @@ function App() {
           </button>
 
           <MotivationalQuote />
-
+          
           <ProgressBar completed={completedCount} total={habits.length} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -123,7 +210,7 @@ function App() {
                        transition text-3xl font-bold hover:rotate-90 duration-300"
           >
             +
-          </button>
+          </button> 
 
           {showModal && (
             <Modal
@@ -135,10 +222,16 @@ function App() {
               editingHabit={editingHabit}
             />
           )}
+
+          {showCelebration && (
+            <CelebrationPopup onClose={() => setShowCelebration(false)} />
+          )}
         </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default App
 
 export default App;
