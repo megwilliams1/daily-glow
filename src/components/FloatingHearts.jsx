@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export default function FloatingHearts() {
   const [hearts, setHearts] = useState([]);
@@ -28,7 +28,7 @@ export default function FloatingHearts() {
           className="absolute text-4xl opacity-70"
           style={{
             left: `${heart.left}%`,
-            bottom: '-50px',
+            bottom: "-50px",
             animation: `float-up 5s ease-in forwards`,
             animationDelay: `${heart.delay}s`,
           }}

@@ -30,7 +30,7 @@ function createParticle(index) {
   };
 }
 
-export default function Card({ title, emoji, onDelete, onEdit }) {
+export default function Card({ title, emoji, onDelete, onEdit, theme }) {
   const [done, setDone] = useState(() => {
     const saved = localStorage.getItem(`done-${title}`);
     const savedDate = localStorage.getItem(`doneDate-${title}`);
@@ -113,6 +113,19 @@ export default function Card({ title, emoji, onDelete, onEdit }) {
     }
   }, [done, lastCompleted]);
 
+  // Get completed background based on theme
+  const getCompletedBg = () => {
+    const themeColors = {
+      pink: 'bg-pink-100 dark:bg-pink-900',
+      blue: 'bg-blue-100 dark:bg-blue-900',
+      mint: 'bg-emerald-100 dark:bg-emerald-900',
+      sunset: 'bg-orange-100 dark:bg-orange-900',
+      lavender: 'bg-purple-100 dark:bg-purple-900',
+      peach: 'bg-rose-100 dark:bg-rose-900'
+    };
+    return themeColors[theme?.id] || themeColors.pink;
+  };
+
   return (
     <div
       onMouseEnter={() => setShowActions(true)}
@@ -120,7 +133,7 @@ export default function Card({ title, emoji, onDelete, onEdit }) {
       className={`relative overflow-visible rounded-2xl p-4 shadow-md cursor-pointer transition
         ${
           done
-            ? "bg-pink-100 dark:bg-pink-900 scale-105"
+            ? `${getCompletedBg()} scale-105`
             : "bg-white dark:bg-neutral-800 hover:-translate-y-1"
         }`}
     >
@@ -205,24 +218,23 @@ export default function Card({ title, emoji, onDelete, onEdit }) {
                 backgroundColor: particle.color,
                 borderRadius: particle.shape === "circle" ? "50%" : "2px",
                 transform: `rotate(${particle.rotation}deg)`,
-                animation: "confetti-burst 0.8s ease-out forwards",
-                "--x": `${x}px`,
-                "--y": `${y}px`,
+                animation: "confetti 0.8s ease-out forwards",
+                "--x": `${Math.cos((particle.angle * Math.PI) / 180) * particle.velocity}px`,
+                "--y": `${Math.sin((particle.angle * Math.PI) / 180) * particle.velocity}px`,
               }}
             />
           );
         })}
 
       <style>{`
-        @keyframes confetti-burst {
+        @keyframes confetti {
           0% {
             opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
+            transform: translate(-50%, -50%) rotate(0deg);
           }
           100% {
             opacity: 0;
-            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y) - 40px))
-              scale(0.5) rotate(180deg);
+            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(360deg);
           }
         }
       `}</style>

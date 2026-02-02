@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const QUOTES = [
   { text: "You are capable of amazing things!", emoji: "✨" },
@@ -24,29 +24,33 @@ export default function MotivationalQuote() {
   useEffect(() => {
     // Get quote based on the day (changes daily)
     const today = new Date().toDateString();
-    const savedDate = localStorage.getItem('quoteDate');
-    const savedQuoteIndex = localStorage.getItem('quoteIndex');
+    const savedDate = localStorage.getItem("quoteDate");
+    const savedQuoteIndex = localStorage.getItem("quoteIndex");
 
     if (savedDate === today && savedQuoteIndex !== null) {
       // Use saved quote for today
       setQuote(QUOTES[parseInt(savedQuoteIndex)]);
     } else {
       // Generate new quote for new day
-      const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+      const dayOfYear = Math.floor(
+        (new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000,
+      );
       const quoteIndex = dayOfYear % QUOTES.length;
-      
+
       setQuote(QUOTES[quoteIndex]);
-      localStorage.setItem('quoteDate', today);
-      localStorage.setItem('quoteIndex', quoteIndex.toString());
+      localStorage.setItem("quoteDate", today);
+      localStorage.setItem("quoteIndex", quoteIndex.toString());
     }
   }, []);
 
   return (
     <div className="mb-6 text-center">
-      <div className="bg-gradient-to-r from-pink-100 to-purple-100 
+      <div
+        className="bg-gradient-to-r from-pink-100 to-purple-100 
                       dark:from-pink-900/30 dark:to-purple-900/30 
                       rounded-2xl p-4 shadow-lg border-2 border-pink-200 
-                      dark:border-pink-800 transition-all hover:scale-105 duration-300">
+                      dark:border-pink-800 transition-all hover:scale-105 duration-300"
+      >
         <p className="text-lg font-medium text-gray-800 dark:text-gray-100 italic">
           "{quote.text}"
         </p>
