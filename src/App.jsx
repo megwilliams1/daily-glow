@@ -1,35 +1,37 @@
-import { useState, useEffect } from 'react'
-import Header from './components/Header'
-import Card from './components/Card'
-import ProgressBar from './components/ProgressBar'
-import './index.css'
-import Modal from './components/Modal'
-import FloatingHearts from './components/FloatingHearts'
+import { useState, useEffect } from "react";
+import Header from "./components/Header";
+import Card from "./components/Card";
+import ProgressBar from "./components/ProgressBar";
+import MotivationalQuote from "./components/MotivationalQuote";
+import "./index.css";
+import Modal from "./components/Modal";
+import FloatingHearts from "./components/FloatingHearts";
 
 function App() {
   const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
+    const saved = localStorage.getItem("darkMode");
     return saved ? JSON.parse(saved) : false;
   });
 
-  const [showModal, setShowModal] = useState(false)
-  const [editingHabit, setEditingHabit] = useState(null)
- 
+  const [showModal, setShowModal] = useState(false);
+  const [editingHabit, setEditingHabit] = useState(null);
+
   const [habits, setHabits] = useState(() => {
-    const saved = localStorage.getItem('habits');
-    return saved ? JSON.parse(saved) : [
-      { id: 1, title: "Drink Water", emoji: "💧" },
-      { id: 2, title: "Pray", emoji: "🙏" },
-      { id: 3, title: "Journal", emoji: "📓" },
-      { id: 4, title: "Read", emoji: "📖" },
-      { id: 5, title: "Walk", emoji: "🚶" },
-      { id: 6, title: "Meditate", emoji: "🧘" },
-      { id: 7, title: "Rest", emoji: "💤" },
-      { id: 8, title: "Stretch", emoji: "🤸" },
-    ];
+    const saved = localStorage.getItem("habits");
+    return saved
+      ? JSON.parse(saved)
+      : [
+          { id: 1, title: "Drink Water", emoji: "💧" },
+          { id: 2, title: "Pray", emoji: "🙏" },
+          { id: 3, title: "Journal", emoji: "📓" },
+          { id: 4, title: "Read", emoji: "📖" },
+          { id: 5, title: "Walk", emoji: "🚶" },
+          { id: 6, title: "Meditate", emoji: "🧘" },
+          { id: 7, title: "Rest", emoji: "💤" },
+          { id: 8, title: "Stretch", emoji: "🤸" },
+        ];
   });
 
-  // Calculate completed habits for today
   const getCompletedCount = () => {
     const today = new Date().toDateString();
     return habits.filter((habit) => {
@@ -42,14 +44,13 @@ function App() {
   const [completedCount, setCompletedCount] = useState(getCompletedCount());
 
   useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(dark));
+    localStorage.setItem("darkMode", JSON.stringify(dark));
   }, [dark]);
 
   useEffect(() => {
-    localStorage.setItem('habits', JSON.stringify(habits));
+    localStorage.setItem("habits", JSON.stringify(habits));
   }, [habits]);
 
-  // Update completed count when habits change
   useEffect(() => {
     const interval = setInterval(() => {
       setCompletedCount(getCompletedCount());
@@ -69,7 +70,9 @@ function App() {
   const handleSaveHabit = (updatedHabit) => {
     if (editingHabit) {
       setHabits((prev) =>
-        prev.map((h) => (h.id === editingHabit.id ? { ...h, ...updatedHabit } : h))
+        prev.map((h) =>
+          h.id === editingHabit.id ? { ...h, ...updatedHabit } : h,
+        ),
       );
       setEditingHabit(null);
     } else {
@@ -93,6 +96,8 @@ function App() {
           >
             {dark ? "🌙 Dark Mode" : "☀️ Light Mode"}
           </button>
+
+          <MotivationalQuote />
 
           <ProgressBar completed={completedCount} total={habits.length} />
 
@@ -118,7 +123,7 @@ function App() {
                        transition text-3xl font-bold hover:rotate-90 duration-300"
           >
             +
-          </button> 
+          </button>
 
           {showModal && (
             <Modal
@@ -133,7 +138,7 @@ function App() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
