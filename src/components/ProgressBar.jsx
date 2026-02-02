@@ -1,4 +1,4 @@
-export default function ProgressBar({ completed, total }) {
+export default function ProgressBar({ completed, total, theme }) {
   const percentage = total > 0 ? (completed / total) * 100 : 0;
 
   return (
@@ -7,15 +7,17 @@ export default function ProgressBar({ completed, total }) {
         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
           Today's Progress
         </p>
-        <p className="text-sm font-semibold text-pink-600 dark:text-pink-400">
+        <p
+          className={`text-sm font-semibold text-${theme.accent}-600 dark:text-${theme.accent}-400`}
+        >
           {completed} / {total} completed
         </p>
       </div>
-      
+
       <div className="relative w-full h-6 bg-gray-200 dark:bg-neutral-700 rounded-full overflow-hidden shadow-inner">
         <div
-          className="h-full bg-gradient-to-r from-pink-400 via-purple-400 to-pink-500 
-                     rounded-full transition-all duration-500 ease-out flex items-center justify-end pr-2"
+          className={`h-full bg-gradient-to-r ${theme.gradient} 
+                     rounded-full transition-all duration-500 ease-out flex items-center justify-end pr-2`}
           style={{ width: `${percentage}%` }}
         >
           {percentage > 10 && (
@@ -24,7 +26,7 @@ export default function ProgressBar({ completed, total }) {
             </span>
           )}
         </div>
-        
+
         {/* Sparkle animation when complete */}
         {percentage === 100 && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -35,7 +37,9 @@ export default function ProgressBar({ completed, total }) {
 
       {/* Motivational message */}
       {percentage === 100 && (
-        <p className="text-center mt-2 text-sm font-medium text-pink-600 dark:text-pink-400 animate-pulse">
+        <p
+          className={`text-center mt-2 text-sm font-medium text-${theme.accent}-600 dark:text-${theme.accent}-400 animate-pulse`}
+        >
           🎉 Amazing! You completed all your habits today! 🎉
         </p>
       )}

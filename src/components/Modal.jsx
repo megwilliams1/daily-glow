@@ -21,7 +21,10 @@ export default function Modal({ onClose, onAdd, editingHabit }) {
   };
 
   return (
-    <div onClick={onClose} className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+    >
       <div
         onClick={(e) => e.stopPropagation()}
         className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-80 shadow-lg
@@ -35,7 +38,7 @@ export default function Modal({ onClose, onAdd, editingHabit }) {
           placeholder="Habit name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleAdd()}
+          onKeyPress={(e) => e.key === "Enter" && handleAdd()}
           className="w-full border rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white dark:bg-neutral-700 text-gray-800 dark:text-gray-100"
         />
         <div className="grid grid-cols-5 gap-2 mb-4">

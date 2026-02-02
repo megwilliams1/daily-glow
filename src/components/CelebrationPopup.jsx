@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const CELEBRATION_MESSAGES = [
   "You're absolutely crushing it! 💪✨",
@@ -12,17 +12,21 @@ const CELEBRATION_MESSAGES = [
 export default function CelebrationPopup({ onClose }) {
   const [confetti, setConfetti] = useState([]);
   const [message] = useState(
-    CELEBRATION_MESSAGES[Math.floor(Math.random() * CELEBRATION_MESSAGES.length)]
+    CELEBRATION_MESSAGES[
+      Math.floor(Math.random() * CELEBRATION_MESSAGES.length)
+    ],
   );
 
   useEffect(() => {
-    // Generate confetti
+    // Confetti particles
     const particles = Array.from({ length: 50 }, (_, i) => ({
       id: i,
       left: Math.random() * 100,
       delay: Math.random() * 0.5,
       duration: 2 + Math.random() * 2,
-      emoji: ['✨', '💖', '🌸', '⭐', '💕', '🎉', '🦋', '💫'][Math.floor(Math.random() * 8)],
+      emoji: ["✨", "💖", "🌸", "⭐", "💕", "🎉", "🦋", "💫"][
+        Math.floor(Math.random() * 8)
+      ],
     }));
     setConfetti(particles);
 
@@ -35,7 +39,7 @@ export default function CelebrationPopup({ onClose }) {
   }, [onClose]);
 
   return (
-    <div 
+    <div
       onClick={onClose}
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-300"
     >
@@ -46,7 +50,7 @@ export default function CelebrationPopup({ onClose }) {
           className="absolute text-2xl pointer-events-none"
           style={{
             left: `${particle.left}%`,
-            top: '-50px',
+            top: "-50px",
             animation: `fall-down ${particle.duration}s linear forwards`,
             animationDelay: `${particle.delay}s`,
           }}
@@ -65,25 +69,33 @@ export default function CelebrationPopup({ onClose }) {
                    animate-in zoom-in duration-500"
       >
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-bounce">
-            🎉
-          </div>
-          
-          <h2 className="text-3xl font-bold text-transparent bg-clip-text 
+          <div className="text-6xl mb-4 animate-bounce">🎉</div>
+
+          <h2
+            className="text-3xl font-bold text-transparent bg-clip-text 
                          bg-gradient-to-r from-pink-600 to-purple-600 
-                         dark:from-pink-300 dark:to-purple-300 mb-3">
+                         dark:from-pink-300 dark:to-purple-300 mb-3"
+          >
             All Done!
           </h2>
-          
+
           <p className="text-lg text-gray-800 dark:text-gray-100 mb-6 font-medium">
             {message}
           </p>
 
           <div className="flex gap-2 justify-center mb-4 text-4xl">
-            <span className="animate-bounce" style={{ animationDelay: '0s' }}>💖</span>
-            <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>✨</span>
-            <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>🌸</span>
-            <span className="animate-bounce" style={{ animationDelay: '0.3s' }}>💫</span>
+            <span className="animate-bounce" style={{ animationDelay: "0s" }}>
+              💖
+            </span>
+            <span className="animate-bounce" style={{ animationDelay: "0.1s" }}>
+              ✨
+            </span>
+            <span className="animate-bounce" style={{ animationDelay: "0.2s" }}>
+              🌸
+            </span>
+            <span className="animate-bounce" style={{ animationDelay: "0.3s" }}>
+              💫
+            </span>
           </div>
 
           <button
