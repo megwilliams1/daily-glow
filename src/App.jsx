@@ -5,6 +5,7 @@ import ProgressBar from "./components/ProgressBar";
 import MotivationalQuote from "./components/MotivationalQuote";
 import CelebrationPopup from "./components/CelebrationPopup";
 import ThemePicker, { THEMES } from "./components/ThemePicker";
+import HeatmapView from "./components/HeatmapView";
 import "./index.css";
 import Modal from "./components/Modal";
 import FloatingHearts from "./components/FloatingHearts";
@@ -150,6 +151,8 @@ function App() {
             total={habits.length}
             theme={theme}
           />
+
+          <HeatmapView habits={habits} theme={theme} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {habits.map((habit) => (
